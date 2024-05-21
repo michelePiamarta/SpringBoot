@@ -1,9 +1,28 @@
-package com.example.demo.student;
+package com.example.demo.Traffico;
+
 import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 /*
  * per poter mandare/ricevere oggetti ci serve una classe 
  */
+@Entity 
+@Table //per dire a hibernate di creare una tabella nel db usando questa classe
 public class Traffico {
+    @Id //per dire a hibernate che questo è il campo chiave
+    @SequenceGenerator( //per dire a hibernate di usare una sequenza per generare l'id
+            name = "traffico_sequence", 
+            sequenceName = "traffico_sequence", //nome della sequenza
+            allocationSize = 1 //incremento di 1
+    )
+    @GeneratedValue( //per dire a hibernate di generare l'id tramite la sequenza traffico_sequence
+            strategy = GenerationType.SEQUENCE,
+            generator = "traffico_sequence"
+    )
     private Long id;
     private Integer macchine;
     private Integer camion;
