@@ -19,7 +19,7 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * ritorna il traffico della data odierna
      * @return il traffico della data odierna
      */
-    @Query("SELECT t FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE)") //query per trovare un traffico tramite data
+    @Query("SELECT t FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
     List<Traffico> findByToday(); //query per trovare un traffico tramite data
 
     /**
@@ -37,7 +37,7 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * @param id l'id della fotocamera di cui si vuole il traffico
      * @return il traffico della fotocamera specificata del giorno corrente
      */
-    @Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE)")
+    @Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc")
     List<Traffico> findByFotocamera(Long id);
 
     /**

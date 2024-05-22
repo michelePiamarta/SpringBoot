@@ -13,8 +13,9 @@ creare la tabella
 provare a aggiungere dei record
 ```insert into traffico values(default,1,2,3,54,TIMESTAMP '1999-01-08 04:05:06');```
 
-## SpringBoot
+## SpringBoot  
+per creare il container con il db postgres: docker-compose up  
 in application.proprieties:  
-spring.jpa.hibernate.ddl-auto=update --> aggiorna i database in caso servissero nuove tabelle / dati ma non le elimina nel caso ci fossero già  
-
-! nel controllore immagini è presente una dipendenza del sistema operativo per il path ! 
+spring.jpa.hibernate.ddl-auto=update --> Aggiorna i database in caso servissero nuove tabelle / dati   
+Non le elimina dopo lo spegnimento ma se nel config ce qualcosa con id uguale allora lo sovrascrivera  
+! nel controllore immagini è presente una dipendenza del sistema operativo per il path, anche nel Detecter python ! 
