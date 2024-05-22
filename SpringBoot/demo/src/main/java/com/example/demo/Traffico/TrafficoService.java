@@ -17,12 +17,62 @@ public class TrafficoService {
 		this.trafficoRepository = trafficoRepository;
 	}
 
-    public List<Traffico> getTrafficos(){ // facendo una classe posso usarla per rispondere alle richieste
+	/**
+	 * ritorna tutti i traffici
+	 * @return tutti i traffici
+	 */
+    public List<Traffico> getTrafficos(){
 		return trafficoRepository.findAll(); //ritorna tutti i traffici
 	}
 
-	public Optional<Traffico> getTrafficoFromFotocameraId(Long idFotocamera){ 
-		return trafficoRepository.findById_fotocamera(idFotocamera); //ritorna tutti i traffici con idFotocamera uguale a quello passato
+	/**
+	 * ritorna il traffico della data odierna
+	 * @return il traffico della data odierna
+	 */
+	public Optional<Traffico> getTrafficoFromToday(){
+		return trafficoRepository.findByToday();
 	}
 
+	/**
+	 * ritorna il traffico di una data specifica
+	 * @param giorno il giorno di cui si vuole il traffico
+	 * @param mese il mese di cui si vuole il traffico 
+	 * @param anno l'anno di cui si vuole il traffico
+	 * @return il traffico di una data specifica
+	 */
+	public Optional<Traffico> getTrafficoFromData(String giorno, String mese, String anno){ 
+		return trafficoRepository.findByData(giorno, mese, anno);
+	}
+	
+	/**
+	 * ritorna il traffico di una fotocamera specifica nel giorno corrente
+	 * @param id l'id della fotocamera di cui si vuole il traffico
+	 * @return il traffico della fotocamera specificata nel giorno corrente
+	 */
+	public Optional<Traffico> getTrafficoFromFotocamera(Long id){ 
+		return trafficoRepository.findByFotocamera(id);
+	}
+
+	/**
+	 * ritorna il traffico di tutte le moto della data odierna
+	 * @return il traffico di tutte le moto della data odierna
+	 */
+	public Optional<Traffico> getTrafficoMoto(){
+		return trafficoRepository.findByMoto();
+	}
+
+	/**
+	 * ritorna il traffico di tutte le auto della data odierna
+	 * @return il traffico di tutte le auto della data odierna
+	 */
+	public Optional<Traffico> getTrafficoAuto(){
+		return trafficoRepository.findByAuto();
+	}
+	/**
+	 * ritorna il traffico di tutti i camion della data odierna
+	 * @return il traffico di tutti i camion della data odierna
+	 */
+	public Optional<Traffico> getTrafficoCamion(){
+		return trafficoRepository.findByCamion();
+	}
 }

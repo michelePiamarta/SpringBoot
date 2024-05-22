@@ -15,4 +15,6 @@ provare a aggiungere dei record
 
 ## SpringBoot
 in application.proprieties:  
-spring.jpa.hibernate.ddl-auto=update --> aggiorna i database in caso servissero nuove tabelle / dati ma non le elimina nel caso ci fossero già
+spring.jpa.hibernate.ddl-auto=update --> aggiorna i database in caso servissero nuove tabelle / dati ma non le elimina nel caso ci fossero già  
+
+! nel controllore immagini è presente una dipendenza del sistema operativo per il path ! 

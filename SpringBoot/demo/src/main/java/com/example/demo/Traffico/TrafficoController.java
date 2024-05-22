@@ -26,13 +26,52 @@ public class TrafficoController {
     }
 
     @GetMapping(path = "/hello") // per la get request
-	public List<Traffico> getTrafficos(){ // facendo una classe posso usarla per rispondere alle richieste
+	public List<Traffico> getTrafficos(){ 
         return trafficoService.getTrafficos();
     }
 
-    @GetMapping(path = "/fotocamera") // per la get request
-    public Optional<Traffico> getTrafficoFromFotocameraId(@RequestParam("id") Long idFotocamera){ // facendo una classe posso usarla per rispondere alle richieste
-        return trafficoService.getTrafficoFromFotocameraId(idFotocamera);
+    /**
+     * ritorna una lista di traffico della data odierna
+     * @return una lista di traffico della data odierna
+     */
+    @GetMapping(path = "/oggi")
+    public Optional<Traffico> getTrafficoFromToday(){ 
+        return trafficoService.getTrafficoFromToday();
     }
 
+    /**
+     * ritorna il traffico di una dsata specifica
+     * @param giorno il giorno di cui si vuole il traffico
+     * @param mese il mese di cui si vuole il traffico
+     * @param anno l'anno di cui si vuole il traffico
+     * @return
+     */
+    @GetMapping(path = "/data")
+    public Optional<Traffico> getTrafficoFromData(@RequestParam("giorno") String giorno, @RequestParam("mese") String mese, @RequestParam("anno") String anno){ 
+        return trafficoService.getTrafficoFromData(giorno, mese, anno);
+    }
+    /**
+     * ritorna il traffico di una fotocamera specifica nel giorno corrente
+     * @param idFotocamera l'id della fotocamera di cui si vuole il traffico
+     * @return il traffico della fotocamera specificata nel giorno corrente
+     */
+    @GetMapping(path = "/fotocamera")
+    public Optional<Traffico> getTrafficoFromFotocamera(@RequestParam("fotocamera")Long idFotocamera) {
+        return trafficoService.getTrafficoFromFotocamera(idFotocamera);
+    }
+
+    @GetMapping(path = "/moto")
+    public Optional<Traffico> getTrafficoMoto(){
+        return trafficoService.getTrafficoMoto();
+    }
+
+    @GetMapping(path = "/auto")
+    public Optional<Traffico> getTrafficoAuto(){
+        return trafficoService.getTrafficoAuto();
+    }
+
+    @GetMapping(path = "/camion")
+    public Optional<Traffico> getTrafficoCamion(){
+        return trafficoService.getTrafficoCamion();
+    }
 }
