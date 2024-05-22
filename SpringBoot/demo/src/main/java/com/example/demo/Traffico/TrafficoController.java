@@ -35,7 +35,7 @@ public class TrafficoController {
      * @return una lista di traffico della data odierna
      */
     @GetMapping(path = "/oggi")
-    public Optional<Traffico> getTrafficoFromToday(){ 
+    public List<Traffico> getTrafficoFromToday(){ 
         return trafficoService.getTrafficoFromToday();
     }
 
@@ -56,22 +56,27 @@ public class TrafficoController {
      * @return il traffico della fotocamera specificata nel giorno corrente
      */
     @GetMapping(path = "/fotocamera")
-    public Optional<Traffico> getTrafficoFromFotocamera(@RequestParam("fotocamera")Long idFotocamera) {
+    public List<Traffico> getTrafficoFromFotocamera(@RequestParam("fotocamera")Long idFotocamera) {
         return trafficoService.getTrafficoFromFotocamera(idFotocamera);
     }
 
     @GetMapping(path = "/moto")
-    public Optional<Traffico> getTrafficoMoto(){
+    public List<Traffico> getTrafficoMoto(){
         return trafficoService.getTrafficoMoto();
     }
 
     @GetMapping(path = "/auto")
-    public Optional<Traffico> getTrafficoAuto(){
+    public List<Traffico> getTrafficoAuto(){
         return trafficoService.getTrafficoAuto();
     }
 
     @GetMapping(path = "/camion")
-    public Optional<Traffico> getTrafficoCamion(){
+    public List<Traffico> getTrafficoCamion(){
         return trafficoService.getTrafficoCamion();
     }
+
+    //<@GetMapping(path = "/ogniTraffico")
+    //<public List<Traffico> getOgniTraffico(){
+    //<    return trafficoService.getOgniTraffico();
+    //<}
 }

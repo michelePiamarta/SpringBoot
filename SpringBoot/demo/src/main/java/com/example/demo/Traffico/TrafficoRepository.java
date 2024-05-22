@@ -1,6 +1,7 @@
 package com.example.demo.Traffico;
 
 import java.util.Optional;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,8 +19,8 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * ritorna il traffico della data odierna
      * @return il traffico della data odierna
      */
-    @Query("SELECT t FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)") //query per trovare un traffico tramite data
-    Optional<Traffico> findByToday(); //query per trovare un traffico tramite data
+    @Query("SELECT t FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE)") //query per trovare un traffico tramite data
+    List<Traffico> findByToday(); //query per trovare un traffico tramite data
 
     /**
      * ritorna il traffico di una data specifica
@@ -36,8 +37,8 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * @param id l'id della fotocamera di cui si vuole il traffico
      * @return il traffico della fotocamera specificata del giorno corrente
      */
-    @Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE)")
-    Optional<Traffico> findByFotocamera(Long id);
+    @Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE)")
+    List<Traffico> findByFotocamera(Long id);
 
     /**
      * ritorna tutto il traffico di una data precedente
@@ -51,22 +52,22 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * ritorna il traffico di tutte le moto della data odierna
      * @return il traffico di tutte le moto della data odierna
      */
-    @Query("SELECT sum(t.moto) FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
-    Optional<Traffico> findByMoto();
+    @Query("SELECT t.moto FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
+    List<Traffico> findByMoto();
 
     /**
      * ritorna il traffico di tutte le auto della data odierna
      * @return il traffico di tutte le auto della data odierna
      */
-    @Query("SELECT sum(t.macchine) FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
-    Optional<Traffico> findByAuto();
+    @Query("SELECT t.macchine FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
+    List<Traffico> findByAuto();
 
     /**
      * ritorna il traffico di tutti i camion della data odierna
      * @return il traffico di tutti i camion della data odierna
      */
-    @Query("SELECT sum(t.camion) FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
-    Optional<Traffico> findByCamion();
+    @Query("SELECT t.camion FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE)")
+    List<Traffico> findByCamion();
 
     //metodi per controllore immagini
     /**
@@ -87,4 +88,6 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      */
     @Query("INSERT INTO Traffico (macchine, camion, moto, idFotocamera, data) VALUES (?1, ?2, ?3, ?4, ?5)")
     void insertTraffico(Integer macchine, Integer camion, Integer moto, Long idFotocamera, java.time.LocalDateTime data);
+
+    
 }

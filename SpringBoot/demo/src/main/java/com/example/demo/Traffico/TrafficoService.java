@@ -29,7 +29,7 @@ public class TrafficoService {
 	 * ritorna il traffico della data odierna
 	 * @return il traffico della data odierna
 	 */
-	public Optional<Traffico> getTrafficoFromToday(){
+	public List<Traffico> getTrafficoFromToday(){
 		return trafficoRepository.findByToday();
 	}
 
@@ -49,7 +49,7 @@ public class TrafficoService {
 	 * @param id l'id della fotocamera di cui si vuole il traffico
 	 * @return il traffico della fotocamera specificata nel giorno corrente
 	 */
-	public Optional<Traffico> getTrafficoFromFotocamera(Long id){ 
+	public List<Traffico> getTrafficoFromFotocamera(Long id){ 
 		return trafficoRepository.findByFotocamera(id);
 	}
 
@@ -57,7 +57,7 @@ public class TrafficoService {
 	 * ritorna il traffico di tutte le moto della data odierna
 	 * @return il traffico di tutte le moto della data odierna
 	 */
-	public Optional<Traffico> getTrafficoMoto(){
+	public List<Traffico> getTrafficoMoto(){
 		return trafficoRepository.findByMoto();
 	}
 
@@ -65,14 +65,18 @@ public class TrafficoService {
 	 * ritorna il traffico di tutte le auto della data odierna
 	 * @return il traffico di tutte le auto della data odierna
 	 */
-	public Optional<Traffico> getTrafficoAuto(){
+	public List<Traffico> getTrafficoAuto(){
 		return trafficoRepository.findByAuto();
 	}
 	/**
 	 * ritorna il traffico di tutti i camion della data odierna
 	 * @return il traffico di tutti i camion della data odierna
 	 */
-	public Optional<Traffico> getTrafficoCamion(){
+	public List<Traffico> getTrafficoCamion(){
 		return trafficoRepository.findByCamion();
 	}
+
+	//public List<Traffico> getOgniTraffico(){
+	//	return trafficoRepository.getOgniTraffico();
+	//}
 }

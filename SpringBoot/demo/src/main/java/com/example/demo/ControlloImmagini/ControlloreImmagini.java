@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+
+import com.example.demo.Traffico.Traffico;
 import com.example.demo.Traffico.TrafficoRepository;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,8 +17,9 @@ import java.io.BufferedReader;
 public class ControlloreImmagini extends Thread{
     
     //leggo le date del database, se la loro data è uguale allora non faccio niente, se invece è diversa allora faccio partire python
-    private String immaginiPath = "D:\\Studenti\\PIAMARTA.Michele\\Git\\SpringBoot\\SpringBoot\\SpringBoot\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini";
-    private String pythonPath = "D:\\Studenti\\PIAMARTA.Michele\\TornadoMendix\\TornadoMendix\\main.py";
+    private String basePath = new File("").getAbsolutePath();
+    private String immaginiPath = basePath+"\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini";
+    private String pythonPath = basePath+"\\demo\\src\\main\\java\\com\\example\\demo\\python\\main.py";
     private final String oldFormat = "yyyyMMddHHmmss";
 
     //aggiungo una dependency injection per fare query al db
@@ -28,6 +31,7 @@ public class ControlloreImmagini extends Thread{
     
     @Override
     public void run() {
+        System.out.println(basePath);
         File folder = new File(immaginiPath);
         File[] listOfFolders = folder.listFiles(); // la lista delle cartelle delle fotocamere
         while(true){
@@ -43,17 +47,17 @@ public class ControlloreImmagini extends Thread{
                 LocalDateTime dataLastImmagine = getLocalDateTimeFromString(getDateTime(lastImmagine),oldFormat);
                 //confronto le date
                 if(lastTimestamp.isPresent()){
-                    if(lastTimestamp.get().equals(dataLastImmagine)){
-                        System.out.println("le date sono uguali sulla fotocamera "+id+" non faccio niente");
+                    if(lastTimestamp.get().equals(dataLastImmagine) || lastTimestamp.get().compareTo(dataLastImmagine) > 0){
+                        System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
                     }
-                    else{
+                    else {
                         System.out.println("le date sono diverse sulla fotocamera "+id+" faccio partire python");
-                        pythonStart(pythonPath,id.toString(),lastImmagine.getName());
+                        pythonStart(pythonPath,id.toString(),dataLastImmagine);
                     }
                 }
                 else{
                     System.out.println("non ci sono timestamp registrati sulla fotocamera "+id+" faccio partire python");
-                    pythonStart(pythonPath,id.toString(),lastImmagine.getName());
+                    pythonStart(pythonPath,id.toString(),dataLastImmagine);
                 }
             }
         }
@@ -107,8 +111,8 @@ public class ControlloreImmagini extends Thread{
      * fa partire lo script python
      * @param path il path dello script python
      */
-    private void pythonStart(String path, String fotocamera, String data){
-        ProcessBuilder processBuilder = new ProcessBuilder("python", path, fotocamera, data);
+    private void pythonStart(String path, String fotocamera, LocalDateTime data){
+        ProcessBuilder processBuilder = new ProcessBuilder("python", path, fotocamera);
         processBuilder.redirectErrorStream(true);
         try{
             Process process = processBuilder.start();
@@ -117,12 +121,29 @@ public class ControlloreImmagini extends Thread{
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             StringBuilder result = new StringBuilder();
             String line;
+            boolean rilevamento = false; //controllo se mi è arrivato "Rilevamento effettuato con successo!"
+            Integer macchine = 0;
+            Integer camion = 0;
+            Integer moto = 0;
             while((line = reader.readLine()) != null){
-                //ci va un controllo se la line può essere convertita in json allora la salvo altrimenti la ignoro
-                result.append(line);
+                //se gli arriva la stringa del rilevamento allora seleziona i dati e li inserisce nel db
+                if(rilevamento){
+                    result.append(line);
+                    System.out.println(line);
+                    String[] tmpArray = line.split(" ");
+                    macchine = Integer.parseInt(tmpArray[0]);
+                    System.out.println("macchine: " + macchine);
+                    camion = Integer.parseInt(tmpArray[1]);
+                    System.out.println("camion: " + camion);
+                    moto = Integer.parseInt(tmpArray[2]);
+                    System.out.println("moto: " + moto);
+                    newEntry(Long.parseLong(fotocamera), macchine, camion, moto, data);
+                    rilevamento = false;
+                }
+                if(line.contains("Rilevamento effettuato con successo!")){
+                    rilevamento = true;
+                }
             }
-            String output = result.toString(); // output del processo python in String formato json
-            System.out.println(output);
 
             int exitCode = process.waitFor(); //aspetta che il processo finisca così da non far partire più processi contemporaneamente della stessa immagine
             System.out.println("exit code: "+exitCode);
@@ -137,6 +158,6 @@ public class ControlloreImmagini extends Thread{
     }
 
     private void newEntry(Long fotocameraId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        trafficoRepository.insertTraffico(macchine, camion, moto, fotocameraId, data);
+        trafficoRepository.save(new Traffico(macchine, camion, moto, fotocameraId, data));
     }
 }
