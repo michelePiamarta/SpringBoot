@@ -31,9 +31,9 @@ public class Traffico {
     private Integer macchine;
     private Integer camion;
     private Integer moto;
-    private Long idFotocamera;
     private LocalDateTime data;
     @ManyToOne
+    // metti lazy il seguente fetch type
     @JoinColumn(name = "fotocamera_id")
     private Fotocamera fotocamera;
 
@@ -42,28 +42,25 @@ public class Traffico {
 
     }
 
-    public Traffico(Long id, Integer macchine, Integer camion, Integer moto, Long idFotocamera, LocalDateTime data) {
+    public Traffico(Long id, Integer macchine, Integer camion, Integer moto, LocalDateTime data) {
         this.id = id;
         this.macchine = macchine;
         this.camion = camion;
         this.moto = moto;
-        this.idFotocamera = idFotocamera;
         this.data = data;
     }
 
-    public Traffico(Integer macchine, Integer camion, Integer moto, Long idFotocamera, LocalDateTime data) {
+    public Traffico(Integer macchine, Integer camion, Integer moto, LocalDateTime data) {
         this.macchine = macchine;
         this.camion = camion;
         this.moto = moto;
-        this.idFotocamera = idFotocamera;
         this.data = data;
     }
 
-    public Traffico(Integer macchine, Integer camion, Integer moto, Long idFotocamera, LocalDateTime data, Fotocamera fotocamera) {
+    public Traffico(Integer macchine, Integer camion, Integer moto, LocalDateTime data, Fotocamera fotocamera) {
         this.macchine = macchine;
         this.camion = camion;
         this.moto = moto;
-        this.idFotocamera = idFotocamera;
         this.data = data;
         this.fotocamera = fotocamera;
     }
@@ -100,20 +97,20 @@ public class Traffico {
         this.moto = moto;
     }
 
-    public Long getIdFotocamera() {
-        return idFotocamera;
-    }
-
-    public void setIdFotocamera(Long idFotocamera) {
-        this.idFotocamera = idFotocamera;
-    }
-
     public LocalDateTime getData() {
         return data;
     }
 
     public void setData(LocalDateTime data) {
         this.data = data;
+    }
+
+    public Fotocamera getFotocamera() {
+        return fotocamera;
+    }
+
+    public void setFotocamera(Fotocamera fotocamera) {
+        this.fotocamera = fotocamera;
     }
 
     //to string
@@ -124,7 +121,6 @@ public class Traffico {
                 ", macchine=" + macchine +
                 ", camion=" + camion +
                 ", moto=" + moto +
-                ", idFotocamera=" + idFotocamera +
                 ", data=" + data +
                 '}';
     }

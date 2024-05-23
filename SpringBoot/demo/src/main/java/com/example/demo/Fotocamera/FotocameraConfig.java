@@ -7,9 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FotocameraConfig {
     @Bean //per dire a spring di eseguire questo metodo all'avvio dell'applicazione
-    CommandLineRunner prova(FotocameraRepository repository){
+    CommandLineRunner configurazioneFotocamere(FotocameraRepository repository){
         return args -> {
-            //dati di prova
 			repository.save(new Fotocamera(2L, "Galleria Rocchetta SS 43 direzione Trento"));
 			repository.save(new Fotocamera(4L, "PMV CARRELLATO 836 Strada non specificata"));
 			repository.save(new Fotocamera(5L, "PMV CARRELLATO 897 Strada non specificata"));

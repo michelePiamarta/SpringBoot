@@ -1,10 +1,8 @@
 package com.example.demo.Fotocamera;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
-import com.example.demo.Traffico.Traffico;
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 @Entity
 @Table
@@ -12,9 +10,6 @@ public class Fotocamera {
     @Id
     private Long id;
     private String posizione;
-    @OneToMany(mappedBy = "fotocamera")
-    private List<Traffico> traffici;
-
 
     public Fotocamera() {
     
@@ -41,6 +36,8 @@ public class Fotocamera {
     public void setPosizione(String posizione) {
         this.posizione = posizione;
     }
+
+    //getter for list
 
     @Override
     public String toString() {

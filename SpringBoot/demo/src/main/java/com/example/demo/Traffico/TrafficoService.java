@@ -49,9 +49,9 @@ public class TrafficoService {
 	 * @param id l'id della fotocamera di cui si vuole il traffico
 	 * @return il traffico della fotocamera specificata nel giorno corrente
 	 */
-	public List<Traffico> getTrafficoFromFotocamera(Long id){ 
-		return trafficoRepository.findByFotocamera(id);
-	}
+	//public List<Traffico> getTrafficoFromFotocamera(Long id){ 
+	//	return trafficoRepository.findByFotocamera(id);
+	//}
 
 	/**
 	 * ritorna il traffico di tutte le moto della data odierna

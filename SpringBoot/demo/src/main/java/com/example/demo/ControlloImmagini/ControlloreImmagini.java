@@ -149,7 +149,7 @@ public class ControlloreImmagini extends Thread{
             }
 
             int exitCode = process.waitFor(); //aspetta che il processo finisca così da non far partire più processi contemporaneamente della stessa immagine
-            System.out.println("exit code: "+exitCode);
+            System.out.println("exit code: " + exitCode);
             if(exitCode == 0)
                 System.out.println("successo");
             else
@@ -161,6 +161,6 @@ public class ControlloreImmagini extends Thread{
     }
 
     private void newEntry(Long fotocameraId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        trafficoRepository.save(new Traffico(macchine, camion, moto, fotocameraId, data, fotocameraRepository.findById(fotocameraId).get()));
+        trafficoRepository.save(new Traffico(macchine, camion, moto, data, fotocameraRepository.findById(fotocameraId).get()));
     }
 }

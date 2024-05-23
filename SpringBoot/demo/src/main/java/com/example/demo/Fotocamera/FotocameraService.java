@@ -22,4 +22,8 @@ public class FotocameraService {
     public List<Fotocamera> getFotocamere() {
         return fotocameraRepository.findAll();
     }
+
+    public Optional<Fotocamera> getFotocameraById(Long id) {
+        return fotocameraRepository.findById(id);
+    }
 }

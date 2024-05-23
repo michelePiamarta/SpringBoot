@@ -16,7 +16,7 @@ public class BackEndApplication {
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(BackEndApplication.class, args);
-		controlloreImmagini.start(); // fa partire il thread che controlla le immagini
+		//controlloreImmagini.start(); // fa partire il thread che controlla le immagini
 	}
 
 }

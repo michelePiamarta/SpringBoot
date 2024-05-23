@@ -55,10 +55,10 @@ public class TrafficoController {
      * @param idFotocamera l'id della fotocamera di cui si vuole il traffico
      * @return il traffico della fotocamera specificata nel giorno corrente
      */
-    @GetMapping(path = "/fotocamera")
-    public List<Traffico> getTrafficoFromFotocamera(@RequestParam("fotocamera")Long idFotocamera) {
-        return trafficoService.getTrafficoFromFotocamera(idFotocamera);
-    }
+    //@GetMapping(path = "/fotocamera")
+    //public List<Traffico> getTrafficoFromFotocamera(@RequestParam("fotocamera")Long idFotocamera) {
+    //    return trafficoService.getTrafficoFromFotocamera(idFotocamera);
+    //}
 
     @GetMapping(path = "/moto")
     public List<Traffico> getTrafficoMoto(){

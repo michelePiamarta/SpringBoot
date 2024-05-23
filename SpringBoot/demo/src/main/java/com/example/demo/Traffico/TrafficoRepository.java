@@ -19,7 +19,7 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * ritorna il traffico della data odierna
      * @return il traffico della data odierna
      */
-    @Query("SELECT t,f FROM Traffico t inner join Fotocamera f on t.idFotocamera = f.id WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
+    @Query("SELECT t FROM Traffico t join Fotocamera f on t.fotocamera.id = f.id WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
     List<Traffico> findByToday();
 
     /**
@@ -32,13 +32,13 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
     @Query("SELECT t FROM Traffico t WHERE day(t.data) = ?1 AND month(t.data) = ?2 AND year(t.data) = ?3") 
     Optional<Traffico> findByData(String giorno, String mese, String anno); 
 
-    /**
-     * ritorna il traffico di una fotocamera specifica del giorno corrente
-     * @param id l'id della fotocamera di cui si vuole il traffico
-     * @return il traffico della fotocamera specificata del giorno corrente
-     */
-    @Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc")
-    List<Traffico> findByFotocamera(Long id);
+    ///**
+    // * ritorna il traffico di una fotocamera specifica del giorno corrente
+    // * @param id l'id della fotocamera di cui si vuole il traffico
+    // * @return il traffico della fotocamera specificata del giorno corrente
+    // */
+    //@Query("SELECT t FROM Traffico t WHERE t.idFotocamera = ?1 AND day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc")
+    //List<Traffico> findByFotocamera(Long id);
 
     /**
      * ritorna tutto il traffico di una data precedente
@@ -75,7 +75,7 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * @param id l'id della fotocamera
      * @return l'ultimo timestamp registrato nel db data una fotocamera
      */
-    @Query("SELECT max(t.data) FROM Traffico t WHERE t.idFotocamera = ?1")
+    @Query("SELECT max(t.data) FROM Traffico t join fotocamera f on t.fotocamera.id = f.id WHERE f.id = ?1")
     Optional<java.time.LocalDateTime> getLastTimestamp(Long id);
 
     /**
@@ -86,8 +86,8 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * @param idFotocamera l'id della fotocamera da inserire
      * @param data la data da inserire
      */
-    @Query("INSERT INTO Traffico (macchine, camion, moto, idFotocamera, data) VALUES (?1, ?2, ?3, ?4, ?5)")
-    void insertTraffico(Integer macchine, Integer camion, Integer moto, Long idFotocamera, java.time.LocalDateTime data);
+    @Query("INSERT INTO Traffico (macchine, camion, moto, data) VALUES (?1, ?2, ?3, ?4)")
+    void insertTraffico(Integer macchine, Integer camion, Integer moto, java.time.LocalDateTime data);
 
     
 }
