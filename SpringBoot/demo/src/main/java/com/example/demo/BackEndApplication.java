@@ -10,6 +10,7 @@ public class BackEndApplication {
 
 	private static ControlloreImmagini controlloreImmagini;
 
+	@SuppressWarnings("static-access") //per toglire il warning di static access a un metodo non statico di controllore immagini
 	public BackEndApplication(ControlloreImmagini controlloreImmagini){
 		this.controlloreImmagini = controlloreImmagini; //funziona ma ogni volta che creo un oggetto di questa classe mi cambia il controllore di tutte le altre classi
 	}

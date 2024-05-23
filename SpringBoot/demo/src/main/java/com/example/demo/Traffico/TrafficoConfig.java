@@ -23,6 +23,8 @@ public class TrafficoConfig {
             repository.save(new Traffico(9L,1,7,2,98L,LocalDateTime.of(2024,5,22,15,32,59)));
             repository.save(new Traffico(10L,1,7,2,108L,LocalDateTime.of(2024,5,22,19,12,59)));
             repository.save(new Traffico(11L,1,7,2,78L,LocalDateTime.of(2024,5,22,15,12,59)));
+            repository.save(new Traffico(11L,1,7,2,2L,LocalDateTime.of(2024,5,23,15,12,59)));
+            repository.save(new Traffico(11L,1,7,2,2L,LocalDateTime.of(2024,5,23,15,12,59)));
         };
     }
 }

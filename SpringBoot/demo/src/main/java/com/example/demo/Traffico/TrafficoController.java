@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController //mi permette di aggiungere endpoints a questa classe
-@RequestMapping(path = "api/v1/traffico") // diamo un path url di default per le richieste a questa classe
+@RequestMapping(path = "traffico") // diamo un path url di default per le richieste a questa classe
 /*
  * in questa classe definisco i metodi che risponderanno alle richieste http, api layer
  */

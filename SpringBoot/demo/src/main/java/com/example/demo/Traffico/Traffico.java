@@ -1,12 +1,16 @@
 package com.example.demo.Traffico;
 
 import java.time.LocalDateTime;
+import com.example.demo.Fotocamera.Fotocamera;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+
 /*
  * per poter mandare/ricevere oggetti ci serve una classe 
  */
@@ -29,6 +33,10 @@ public class Traffico {
     private Integer moto;
     private Long idFotocamera;
     private LocalDateTime data;
+    @ManyToOne
+    @JoinColumn(name = "fotocamera_id")
+    private Fotocamera fotocamera;
+
 
     public Traffico() {
 
@@ -49,6 +57,15 @@ public class Traffico {
         this.moto = moto;
         this.idFotocamera = idFotocamera;
         this.data = data;
+    }
+
+    public Traffico(Integer macchine, Integer camion, Integer moto, Long idFotocamera, LocalDateTime data, Fotocamera fotocamera) {
+        this.macchine = macchine;
+        this.camion = camion;
+        this.moto = moto;
+        this.idFotocamera = idFotocamera;
+        this.data = data;
+        this.fotocamera = fotocamera;
     }
 
     public Long getId() {

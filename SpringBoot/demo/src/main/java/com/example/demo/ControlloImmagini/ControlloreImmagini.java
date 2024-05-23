@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
+import com.example.demo.Fotocamera.FotocameraRepository;
 import com.example.demo.Traffico.Traffico;
 import com.example.demo.Traffico.TrafficoRepository;
 import java.io.InputStream;
@@ -24,9 +25,11 @@ public class ControlloreImmagini extends Thread{
 
     //aggiungo una dependency injection per fare query al db
     private final TrafficoRepository trafficoRepository;
+    private final FotocameraRepository fotocameraRepository;
 
-    public ControlloreImmagini(TrafficoRepository trafficoRepository){
+    public ControlloreImmagini(TrafficoRepository trafficoRepository, FotocameraRepository fotocameraRepository){
         this.trafficoRepository = trafficoRepository;
+        this.fotocameraRepository = fotocameraRepository;
     }
     
     @Override
@@ -48,7 +51,7 @@ public class ControlloreImmagini extends Thread{
                 //confronto le date
                 if(lastTimestamp.isPresent()){
                     if(lastTimestamp.get().equals(dataLastImmagine) || lastTimestamp.get().compareTo(dataLastImmagine) > 0){
-                        System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
+                        //System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
                     }
                     else {
                         System.out.println("le date sono diverse sulla fotocamera "+id+" faccio partire python");
@@ -158,6 +161,6 @@ public class ControlloreImmagini extends Thread{
     }
 
     private void newEntry(Long fotocameraId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        trafficoRepository.save(new Traffico(macchine, camion, moto, fotocameraId, data));
+        trafficoRepository.save(new Traffico(macchine, camion, moto, fotocameraId, data, fotocameraRepository.findById(fotocameraId).get()));
     }
 }

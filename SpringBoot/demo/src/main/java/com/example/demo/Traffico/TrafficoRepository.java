@@ -19,8 +19,8 @@ public interface TrafficoRepository extends JpaRepository<Traffico, Long>{ //spe
      * ritorna il traffico della data odierna
      * @return il traffico della data odierna
      */
-    @Query("SELECT t FROM Traffico t WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
-    List<Traffico> findByToday(); //query per trovare un traffico tramite data
+    @Query("SELECT t,f FROM Traffico t inner join Fotocamera f on t.idFotocamera = f.id WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
+    List<Traffico> findByToday();
 
     /**
      * ritorna il traffico di una data specifica
