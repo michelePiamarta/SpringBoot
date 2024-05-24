@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 import com.example.demo.Fotocamera.FotocameraRepository;
-import com.example.demo.Traffico.Traffico;
-import com.example.demo.Traffico.TrafficoRepository;
+import com.example.demo.Immagine.Immagine;
+import com.example.demo.Immagine.ImmagineRepository;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -24,12 +25,12 @@ public class ControlloreImmagini extends Thread{
     private final String oldFormat = "yyyyMMddHHmmss";
 
     //aggiungo una dependency injection per fare query al db
-    private final TrafficoRepository trafficoRepository;
     private final FotocameraRepository fotocameraRepository;
+    private final ImmagineRepository trafficoRepository;
 
-    public ControlloreImmagini(TrafficoRepository trafficoRepository, FotocameraRepository fotocameraRepository){
-        this.trafficoRepository = trafficoRepository;
+    public ControlloreImmagini(FotocameraRepository fotocameraRepository, ImmagineRepository trafficoRepository){
         this.fotocameraRepository = fotocameraRepository;
+        this.trafficoRepository = trafficoRepository;
     }
     
     @Override
@@ -51,7 +52,7 @@ public class ControlloreImmagini extends Thread{
                 //confronto le date
                 if(lastTimestamp.isPresent()){
                     if(lastTimestamp.get().equals(dataLastImmagine) || lastTimestamp.get().compareTo(dataLastImmagine) > 0){
-                        //System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
+                        System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
                     }
                     else {
                         System.out.println("le date sono diverse sulla fotocamera "+id+" faccio partire python");
@@ -97,7 +98,7 @@ public class ControlloreImmagini extends Thread{
      * @return l'ultimo timestamp registrato nel db a seconda della fotocamera
      */
     private Optional<java.time.LocalDateTime> getLastTimestamp(Long fotocamera){
-        return trafficoRepository.getLastTimestamp(fotocamera);
+        return fotocameraRepository.findLastTimestamp(fotocamera);
     }
 
 
@@ -161,6 +162,6 @@ public class ControlloreImmagini extends Thread{
     }
 
     private void newEntry(Long fotocameraId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        trafficoRepository.save(new Traffico(macchine, camion, moto, data, fotocameraRepository.findById(fotocameraId).get()));
+        trafficoRepository.save(new Immagine(macchine, camion, moto, data, fotocameraRepository.findById(fotocameraId).get()));
     }
 }

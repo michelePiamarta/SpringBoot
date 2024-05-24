@@ -17,18 +17,23 @@ public class FotocameraController {
         this.fotocameraService = fotocameraService;
     }
 
-    @GetMapping(path = "/oggi")
-    public List<Fotocamera> getFotocamera() {
-        return fotocameraService.findByToday();
-    }
-
     @GetMapping(path = "/all")
-    public List<Fotocamera> getFotocamere() {
-        return fotocameraService.getFotocamere();
+    public List<Fotocamera.FotocameraConIdEPosizione> getAll(){
+        return fotocameraService.findAllFotocamere();
     }
 
-    @PostMapping(path = "/id")
-    public void getFotocameraById(@RequestBody Prova[] id) {
-        System.out.println(id[0].toString());
+    @GetMapping(path = "/today")
+    public List<Fotocamera.FotocameraSenzaMedie> getFotocamereToday() {
+        return fotocameraService.getFotocamereToday();
+    }
+
+    @GetMapping(path = "/medie")
+    public List<Fotocamera> getFotocamereTodayMedie(){
+        return fotocameraService.getFotocamereTodayMedie();
+    }
+
+    @PostMapping(path = "/filtrato")
+    public List<Fotocamera> getFotocamereFiltrate(@RequestBody List<PostBody> body){
+        return fotocameraService.getFotocamereFiltrate(body);
     }
 }
