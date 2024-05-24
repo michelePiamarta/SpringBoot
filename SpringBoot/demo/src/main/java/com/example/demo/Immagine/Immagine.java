@@ -1,7 +1,8 @@
 package com.example.demo.Immagine;
 
 import java.time.LocalDateTime;
-import com.example.demo.Fotocamera.Fotocamera;
+
+import com.example.demo.Webcam.Webcam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -40,9 +41,9 @@ public class Immagine {
     private LocalDateTime data;
     @ManyToOne
     // metti lazy il seguente fetch type
-    @JoinColumn(name = "fotocamera_id")
+    @JoinColumn(name = "webcam_id")
     @JsonIgnore //per evitare il loop infinito posso tenere la foreign key ma non la serializzo per non mandarla
-    private Fotocamera fotocamera;
+    private Webcam webcam;
 
 
     public Immagine() {
@@ -64,12 +65,12 @@ public class Immagine {
         this.data = data;
     }
 
-    public Immagine(Integer macchine, Integer camion, Integer moto, LocalDateTime data, Fotocamera fotocamera) {
+    public Immagine(Integer macchine, Integer camion, Integer moto, LocalDateTime data, Webcam fotocamera) {
         this.macchine = macchine;
         this.camion = camion;
         this.moto = moto;
         this.data = data;
-        this.fotocamera = fotocamera;
+        this.webcam = fotocamera;
     }
 
     public Long getId() {
@@ -112,12 +113,12 @@ public class Immagine {
         this.data = data;
     }
     //@JsonIgnore
-    public Fotocamera getFotocamera() {
-        return fotocamera;
+    public Webcam getWebcam() {
+        return webcam;
     }
     //@JsonIgnore
-    public void setFotocamera(Fotocamera fotocamera) {
-        this.fotocamera = fotocamera;
+    public void setWebcam(Webcam fotocamera) {
+        this.webcam = fotocamera;
     }
 
     public Integer getVeicoli() {

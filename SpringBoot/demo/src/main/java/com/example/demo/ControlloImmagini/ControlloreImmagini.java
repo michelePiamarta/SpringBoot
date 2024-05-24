@@ -5,11 +5,9 @@ import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-
-import com.example.demo.Fotocamera.FotocameraRepository;
 import com.example.demo.Immagine.Immagine;
 import com.example.demo.Immagine.ImmagineRepository;
-
+import com.example.demo.Webcam.WebcamRepository;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -25,12 +23,12 @@ public class ControlloreImmagini extends Thread{
     private final String oldFormat = "yyyyMMddHHmmss";
 
     //aggiungo una dependency injection per fare query al db
-    private final FotocameraRepository fotocameraRepository;
-    private final ImmagineRepository trafficoRepository;
+    private final WebcamRepository webcamRepository;
+    private final ImmagineRepository immagineRepository;
 
-    public ControlloreImmagini(FotocameraRepository fotocameraRepository, ImmagineRepository trafficoRepository){
-        this.fotocameraRepository = fotocameraRepository;
-        this.trafficoRepository = trafficoRepository;
+    public ControlloreImmagini(WebcamRepository webcamRepository, ImmagineRepository trafficoRepository){
+        this.webcamRepository = webcamRepository;
+        this.immagineRepository = trafficoRepository;
     }
     
     @Override
@@ -94,11 +92,11 @@ public class ControlloreImmagini extends Thread{
 
     /**
      * ritorna l'ultimo timestamp registrato nel db a seconda della fotocamera
-     * @param fotocamera l'id della fotocamera di cui si vuole il timestamp
+     * @param webcam l'id della fotocamera di cui si vuole il timestamp
      * @return l'ultimo timestamp registrato nel db a seconda della fotocamera
      */
-    private Optional<java.time.LocalDateTime> getLastTimestamp(Long fotocamera){
-        return fotocameraRepository.findLastTimestamp(fotocamera);
+    private Optional<java.time.LocalDateTime> getLastTimestamp(Long webcam){
+        return webcamRepository.findLastTimestamp(webcam);
     }
 
 
@@ -115,8 +113,8 @@ public class ControlloreImmagini extends Thread{
      * fa partire lo script python
      * @param path il path dello script python
      */
-    private void pythonStart(String path, String fotocamera, LocalDateTime data){
-        ProcessBuilder processBuilder = new ProcessBuilder("python", path, fotocamera);
+    private void pythonStart(String path, String webcam, LocalDateTime data){
+        ProcessBuilder processBuilder = new ProcessBuilder("python", path, webcam);
         processBuilder.redirectErrorStream(true);
         try{
             Process process = processBuilder.start();
@@ -141,7 +139,7 @@ public class ControlloreImmagini extends Thread{
                     System.out.println("camion: " + camion);
                     moto = Integer.parseInt(tmpArray[2]);
                     System.out.println("moto: " + moto);
-                    newEntry(Long.parseLong(fotocamera), macchine, camion, moto, data);
+                    newEntry(Long.parseLong(webcam), macchine, camion, moto, data);
                     rilevamento = false;
                 }
                 if(line.contains("Rilevamento effettuato con successo!")){
@@ -161,7 +159,7 @@ public class ControlloreImmagini extends Thread{
         }
     }
 
-    private void newEntry(Long fotocameraId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        trafficoRepository.save(new Immagine(macchine, camion, moto, data, fotocameraRepository.findById(fotocameraId).get()));
+    private void newEntry(Long webcamId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
+        immagineRepository.save(new Immagine(macchine, camion, moto, data, webcamRepository.findById(webcamId).get()));
     }
 }
