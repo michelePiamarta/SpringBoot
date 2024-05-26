@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/webcam")
@@ -76,6 +77,11 @@ public class WebcamController {
         }
 
         return fotocamere;
+    }
+
+    @GetMapping(path = "/medieGenerali")
+    public Optional<Webcam.WebcamMedie> getMedie(){
+        return fotocameraService.getMedie();
     }
 
     private boolean isDateToday(LocalDateTime time){
