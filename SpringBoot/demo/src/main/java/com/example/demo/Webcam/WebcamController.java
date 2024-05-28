@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Immagine.Immagine;
 import com.example.demo.Webcam.Webcam.WebcamSenzaMedie;
-
-import java.util.Calendar;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.Year;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,23 +79,16 @@ public class WebcamController {
         return fotocamere;
     }
 
-    @GetMapping(path = "/medieGenerali")
-    public Optional<Webcam.WebcamMedie> getMedie(){
-        return fotocameraService.getMedie();
+    @GetMapping(path = "medieGenerali")
+    public Optional<WebcamMedie> getMedieGenerali(){
+        return fotocameraService.getMedieGenerali();
     }
 
     private boolean isDateToday(LocalDateTime time){
-        Calendar c = Calendar.getInstance();
-
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.YEAR,0);
-
-        if(time.getDayOfYear() == c.get(Calendar.DAY_OF_YEAR) && time.getYear() == Year.now().getValue()){
+        if(time.getDayOfMonth() == MonthDay.now().getDayOfMonth() && time.getMonth() == YearMonth.now().getMonth() && time.getYear() == Year.now().getValue()){
             return true;
         }
         return false;
     }
+
 }

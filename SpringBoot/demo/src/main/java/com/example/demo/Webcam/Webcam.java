@@ -167,34 +167,5 @@ public class Webcam {
         void setId(Long id);
         void setPosizione(String posizione);
     }
-
-    class WebcamMedie{
-
-        private Float mediaGeneraleMacchine;
-        private Float mediaGeneraleCamion;
-        private Float mediaGeneraleMoto;
-
-        public Float getMediaGeneraleVeicoli(){
-            return getMediaGeneraleMoto() + getMediaGeneraleMacchine() + getMediaGeneraleCamion();
-        }
-        public Float getMediaGeneraleMacchine(){
-            return this.mediaGeneraleMacchine;
-        }
-        public Float getMediaGeneraleCamion(){
-            return this.mediaGeneraleCamion;
-        }
-        public Float getMediaGeneraleMoto(){
-            return this.mediaGeneraleMoto;
-        }
-
-        public void setMediaGeneraleMacchine(Float mediaGeneraleMacchine){
-            this.mediaGeneraleMacchine = mediaGeneraleMacchine;
-        }
-        public void setMediaGeneraleMoto(Float mediaGeneraleMoto){
-            this.mediaGeneraleMoto = mediaGeneraleMoto;
-        }
-        public void setMediaGeneraleCamion(Float mediaGeneraleCamion){
-            this.mediaGeneraleCamion = mediaGeneraleCamion;
-        }
-    }
+        
 }

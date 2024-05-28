@@ -38,4 +38,8 @@ public class WebcamService {
             ids.add(id.id);
         return fotocameraRepository.findWebcamFiltrate(ids);
     }
+
+    public Optional<WebcamMedie> getMedieGenerali(){
+        return fotocameraRepository.findMedieGenerali();
+    }
 }

@@ -2,9 +2,12 @@ package com.example.demo.Webcam;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface WebcamRepository extends JpaRepository<Webcam, Long>{
 
 
@@ -23,4 +26,7 @@ public interface WebcamRepository extends JpaRepository<Webcam, Long>{
 
     @Query("SELECT w FROM Webcam w join Immagine i on w.id = i.webcam.id where w.id in ?1")
     List<Webcam> findWebcamFiltrate(List<Long> body);
+    //macchine camion moto
+    @Query("SELECT new com.example.demo.Webcam.WebcamMedie(avg(i.macchine),avg(i.camion),avg(i.moto)) from Webcam w join Immagine i on w.id = i.webcam.id where day(i.data) = day(CURRENT_DATE) and month(i.data) = month(CURRENT_DATE) and year(i.data) = year(CURRENT_DATE)")
+    Optional<WebcamMedie> findMedieGenerali();
 }

@@ -3,20 +3,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.demo.ControlloImmagini.ControlloreImmagini;
+import com.example.demo.ControlloImmagini.ManagerImmagini;
 
 @SpringBootApplication
 public class BackEndApplication {
 
 
-	private static ControlloreImmagini controlloreImmagini;
+	private static ManagerImmagini managerImmagini;
 
 	@SuppressWarnings("static-access") //per toglire il warning di static access a un metodo non statico di controllore immagini
-	public BackEndApplication(ControlloreImmagini controlloreImmagini){
-		this.controlloreImmagini = controlloreImmagini; //funziona ma ogni volta che creo un oggetto di questa classe mi cambia il controllore di tutte le altre classi
+	public BackEndApplication(ManagerImmagini managerImmagini){
+		this.managerImmagini = managerImmagini; //funziona ma ogni volta che creo un oggetto di questa classe mi cambia il controllore di tutte le altre classi
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(BackEndApplication.class, args);
-		controlloreImmagini.start(); // fa partire il thread che controlla le immagini
+		managerImmagini.start(); // fa partire il thread che controlla e processa le immagini
 	}
 
 }

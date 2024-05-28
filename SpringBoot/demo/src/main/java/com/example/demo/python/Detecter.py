@@ -6,12 +6,13 @@ from pathlib import Path
 
 class Detector:
 
-    def __init__(self,cam=69):
-        self.model_path = f'{os.path.dirname(__file__)}\\yolov8l.pt'
+    def __init__(self,cam,immagine):
+        self.model_path = f'{os.path.dirname(__file__)}\\yolov8n.pt'
         self.dir_path = f'{os.path.dirname(__file__)}\\..\\ControlloImmagini\\immagini\\cam{cam}'
         self.model = YOLO(self.model_path)
         self.idCam = cam
         self.threshold = 0.5
+        self.immagine = immagine
 
     def detect(self):
         try:
@@ -21,14 +22,10 @@ class Detector:
             moto = 0
 
             #prendo l'immagine più recente
-            lista_immagini = glob.glob(f'{self.dir_path}/*.jpg')
-            immagine = max(lista_immagini, key=os.path.getctime)
-            print(immagine)
-
-            immagine = f'{immagine}'
+            print(self.immagine)
             #effettuo il rilevamento delle auto
             #aggiungo al livello di traffico 1 per le auto e 2 per i camion
-            results = self.model(immagine,conf=self.threshold)
+            results = self.model(self.immagine,conf=self.threshold)
             for result in results:
                 for detection in result:
                     classId = detection.boxes.data[0][5]

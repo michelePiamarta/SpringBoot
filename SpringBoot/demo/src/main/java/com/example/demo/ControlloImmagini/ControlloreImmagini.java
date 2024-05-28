@@ -1,17 +1,14 @@
 package com.example.demo.ControlloImmagini;
 
 import java.io.File;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import com.example.demo.Immagine.Immagine;
 import com.example.demo.Immagine.ImmagineRepository;
-import com.example.demo.Webcam.WebcamRepository;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.io.BufferedReader;
+import java.time.YearMonth;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
 public class ControlloreImmagini extends Thread{
@@ -19,57 +16,37 @@ public class ControlloreImmagini extends Thread{
     //leggo le date del database, se la loro data è uguale allora non faccio niente, se invece è diversa allora faccio partire python
     private String basePath = new File("").getAbsolutePath();
     private String immaginiPath = basePath+"\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini";
-    private String pythonPath = basePath+"\\demo\\src\\main\\java\\com\\example\\demo\\python\\main.py";
     private final String oldFormat = "yyyyMMddHHmmss";
-
+    // una queue thread safe, se non ce un elemento o vuole aggiungerne uno quando la coda è piena
+    // allora aspetterà fino a quando non ce un elemento o la coda non si svuota
+    private LinkedBlockingQueue<String> codaImmagini;
     //aggiungo una dependency injection per fare query al db
-    private final WebcamRepository webcamRepository;
     private final ImmagineRepository immagineRepository;
 
-    public ControlloreImmagini(WebcamRepository webcamRepository, ImmagineRepository trafficoRepository){
-        this.webcamRepository = webcamRepository;
-        this.immagineRepository = trafficoRepository;
+    public ControlloreImmagini(ImmagineRepository immagineRepository){
+        this.immagineRepository = immagineRepository;
     }
     
+    public void setCodaImmagini(LinkedBlockingQueue<String> codaImmagini){
+        this.codaImmagini = codaImmagini;
+    }
+
     @Override
     public void run() {
-        System.out.println(basePath);
-        File folder = new File(immaginiPath);
-        File[] listOfFolders = folder.listFiles(); // la lista delle cartelle delle fotocamere
         while(true){
-            for(File folderCam : listOfFolders){
-                //prendo l'id della fotocamera
-                Long id = getCamId(folderCam);
-                //prendo l'ultimo timestamp registrato nel db dalla fotocamera usando l'id
-                Optional<LocalDateTime> lastTimestamp = getLastTimestamp(id);
-                //prendo l'ultima immagine scattata
-                File[] immagini = folderCam.listFiles();
-                File lastImmagine = immagini[immagini.length-1];
-                //prendo la data dell'immagine
-                LocalDateTime dataLastImmagine = getLocalDateTimeFromString(getDateTime(lastImmagine),oldFormat);
-                //confronto le date
-                if(lastTimestamp.isPresent()){
-                    if(lastTimestamp.get().equals(dataLastImmagine) || lastTimestamp.get().compareTo(dataLastImmagine) > 0){
-                        System.out.println("le date sono aggiornate sulla fotocamera "+id+" non faccio niente");
+            //cerco una nuova immagine/ delle nuove immagini e le aggiungo alla coda
+            //(non puoi usare addAll perchè non è un operazione thread safe visto che viene inheritata da abstract queue)
+            File folder = new File(immaginiPath);
+            File[] listOfFolders = folder.listFiles();
+            for (File webcam : listOfFolders) {
+                for(File immagine : webcam.listFiles()){
+                    if(needsToBeProcessed(immagine)){
+                        codaImmagini.add(immagine.getAbsolutePath());
                     }
-                    else {
-                        System.out.println("le date sono diverse sulla fotocamera "+id+" faccio partire python");
-                        pythonStart(pythonPath,id.toString(),dataLastImmagine);
-                    }
-                }
-                else{
-                    System.out.println("non ci sono timestamp registrati sulla fotocamera "+id+" faccio partire python");
-                    pythonStart(pythonPath,id.toString(),dataLastImmagine);
                 }
             }
         }
     }
-
-    //metodi utili
-    //metodo per prendere la data e ora dell'ultimo dato registrato nel db a seconda della fotocamera - fatto
-    //metodo per convertire la data dell'immagine in un formato leggibile al db - fatto
-    //metodo per prendere l'id della fotocamera dalla cartella - fatto
-    //metodo che fa partire python
 
     /**
      * ritorna la data e l'ora dell'immagine
@@ -87,18 +64,9 @@ public class ControlloreImmagini extends Thread{
      * @return l'id della fotocamera a partire dalla cartella
      */
     private Long getCamId(File folder){
-        return Long.parseLong(folder.getName().split("cam")[1]);
+        String tmp = folder.getName().split("cam")[1];
+        return Long.parseLong(tmp.split(".jpg")[0]);
     }
-
-    /**
-     * ritorna l'ultimo timestamp registrato nel db a seconda della fotocamera
-     * @param webcam l'id della fotocamera di cui si vuole il timestamp
-     * @return l'ultimo timestamp registrato nel db a seconda della fotocamera
-     */
-    private Optional<java.time.LocalDateTime> getLastTimestamp(Long webcam){
-        return webcamRepository.findLastTimestamp(webcam);
-    }
-
 
     /**
      * ritorna un oggetto LocalDateTime a partire da una stringa
@@ -109,57 +77,32 @@ public class ControlloreImmagini extends Thread{
         return java.time.LocalDateTime.parse(date, DateTimeFormatter.ofPattern(format));
     } 
 
-    /**
-     * fa partire lo script python
-     * @param path il path dello script python
-     */
-    private void pythonStart(String path, String webcam, LocalDateTime data){
-        ProcessBuilder processBuilder = new ProcessBuilder("python", path, webcam);
-        processBuilder.redirectErrorStream(true);
-        try{
-            Process process = processBuilder.start();
-            //per leggere i print del processo python
-            InputStream inputStream = process.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            StringBuilder result = new StringBuilder();
-            String line;
-            boolean rilevamento = false; //controllo se mi è arrivato "Rilevamento effettuato con successo!"
-            Integer macchine = 0;
-            Integer camion = 0;
-            Integer moto = 0;
-            while((line = reader.readLine()) != null){
-                //se gli arriva la stringa del rilevamento allora seleziona i dati e li inserisce nel db
-                if(rilevamento){
-                    result.append(line);
-                    System.out.println(line);
-                    String[] tmpArray = line.split(" ");
-                    macchine = Integer.parseInt(tmpArray[0]);
-                    System.out.println("macchine: " + macchine);
-                    camion = Integer.parseInt(tmpArray[1]);
-                    System.out.println("camion: " + camion);
-                    moto = Integer.parseInt(tmpArray[2]);
-                    System.out.println("moto: " + moto);
-                    newEntry(Long.parseLong(webcam), macchine, camion, moto, data);
-                    rilevamento = false;
-                }
-                if(line.contains("Rilevamento effettuato con successo!")){
-                    rilevamento = true;
-                }
-            }
+    public boolean needsToBeProcessed(File file){
+        //controllo se l'immagine è di oggi
+        if(!isDateToday(getLocalDateTimeFromString(getDateTime(file),oldFormat))){
+            //System.out.println("l'immagine "+file.getName()+" non è di oggi");
+            return false;
+        }
 
-            int exitCode = process.waitFor(); //aspetta che il processo finisca così da non far partire più processi contemporaneamente della stessa immagine
-            System.out.println("exit code: " + exitCode);
-            if(exitCode == 0)
-                System.out.println("successo");
-            else
-                System.out.println("errore");
+        //controllo se è nella coda
+        if(codaImmagini.contains(file.getAbsolutePath())){
+            //System.out.println("è già presente all'interno della coda l'immagine "+file.getName());
+            return false;
         }
-        catch(Exception e){
-            e.printStackTrace();
+        //controllo se è nel database, gli passo come parametri data e cam id
+        //controllo se la lista che mi ritorna la query del db non è vuota
+        if(!(this.immagineRepository.hasBeenSaved(getLocalDateTimeFromString(getDateTime(file), oldFormat),getCamId(file)).isEmpty())){
+            //System.out.println("è già presente del db l'immagine "+file.getName());
+            return false;
         }
+        System.out.println("aggiungo l'immagine "+file.getName()+" alla coda");
+        return true;
     }
 
-    private void newEntry(Long webcamId, Integer macchine, Integer camion, Integer moto, LocalDateTime data){
-        immagineRepository.save(new Immagine(macchine, camion, moto, data, webcamRepository.findById(webcamId).get()));
+    private boolean isDateToday(LocalDateTime time){
+        if(time.getDayOfMonth() == MonthDay.now().getDayOfMonth() && time.getMonth() == YearMonth.now().getMonth() && time.getYear() == Year.now().getValue()){
+            return true;
+        }
+        return false;
     }
 }

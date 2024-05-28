@@ -19,7 +19,7 @@ public interface ImmagineRepository extends JpaRepository<Immagine, Long>{ //spe
      * ritorna il immagine della data odierna
      * @return il immagine della data odierna
      */
-    @Query("SELECT t FROM Immagine t join Fotocamera f on t.fotocamera.id = f.id WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
+    @Query("SELECT t FROM Immagine t join Webcam w on t.webcam.id = w.id WHERE day(t.data) = day(CURRENT_DATE) and month(t.data) = month(CURRENT_DATE) and year(t.data) = year(CURRENT_DATE) order by t.data asc") //query per trovare un traffico tramite data
     List<Immagine> findByToday();
 
     /**
@@ -75,7 +75,7 @@ public interface ImmagineRepository extends JpaRepository<Immagine, Long>{ //spe
      * @param id l'id della fotocamera
      * @return l'ultimo timestamp registrato nel db data una fotocamera
      */
-    @Query("SELECT max(t.data) FROM Immagine t join fotocamera f on t.fotocamera.id = f.id WHERE f.id = ?1")
+    @Query("SELECT max(t.data) FROM Immagine t join webcam w on t.webcam.id = w.id WHERE w.id = ?1")
     Optional<java.time.LocalDateTime> getLastTimestamp(Long id);
 
     /**
@@ -89,5 +89,6 @@ public interface ImmagineRepository extends JpaRepository<Immagine, Long>{ //spe
     @Query("INSERT INTO Immagine (macchine, camion, moto, data) VALUES (?1, ?2, ?3, ?4)")
     void insertTraffico(Integer macchine, Integer camion, Integer moto, java.time.LocalDateTime data);
 
-    
+    @Query("select i from Immagine i where i.data = ?1 AND i.webcam.id = ?2")
+    List<Immagine> hasBeenSaved(java.time.LocalDateTime data,Long webcamId);
 }
