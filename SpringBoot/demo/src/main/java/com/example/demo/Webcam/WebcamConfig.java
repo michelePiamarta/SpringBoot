@@ -1,24 +1,12 @@
 package com.example.demo.Webcam;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.example.demo.Immagine.Immagine;
-import com.example.demo.Immagine.ImmagineRepository;
-
-import java.time.LocalDateTime;
-
 @Configuration
 public class WebcamConfig {
 
-    private ImmagineRepository immagineRepository;
-
-    @Autowired
-    public WebcamConfig(ImmagineRepository immagineRepository){
-        this.immagineRepository = immagineRepository;
-    }
 
     @Bean //per dire a spring di eseguire questo metodo all'avvio dell'applicazione
     CommandLineRunner configurazioneFotocamere(WebcamRepository repository){
@@ -128,20 +116,7 @@ public class WebcamConfig {
             repository.save(new Webcam(132L, "Compet SP 12 direzione Panarotta"));
             repository.save(new Webcam(133L, "Kamuz SP 135 direzione Frassilongo"));
 
-            /// dati fittizi per prove ///
-            //immagineRepository.save(new Immagine(3,2,5,LocalDateTime.of(2024,3,21,12,0,13),repository.findById(69L).get()));
-            //immagineRepository.save(new Immagine(7,3,1,LocalDateTime.of(2024,4,28,12,40,03),repository.findById(69L).get()));
-            //immagineRepository.save(new Immagine(6,8,3,LocalDateTime.of(2024,5,22,13,0,27),repository.findById(34L).get()));
-            //immagineRepository.save(new Immagine(6,8,3,LocalDateTime.of(2024,5,22,13,0,27),repository.findById(97L).get()));
-            //immagineRepository.save(new Immagine(6,8,3,LocalDateTime.of(2024,5,22,13,0,27),repository.findById(88L).get()));
-            //immagineRepository.save(new Immagine(9,3,1,LocalDateTime.of(2024,5,22,15,20,27),repository.findById(88L).get()));
-            //immagineRepository.save(new Immagine(2,4,0,LocalDateTime.of(2024,5,22,15,50,47),repository.findById(88L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,22,15,12,59),repository.findById(88L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,24,15,32,59),repository.findById(98L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,24,19,12,59),repository.findById(108L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,24,15,12,59),repository.findById(5L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,24,15,12,59),repository.findById(2L).get()));
-            //immagineRepository.save(new Immagine(1,7,2,LocalDateTime.of(2024,5,24,15,12,59),repository.findById(2L).get()));
+            
         };
     }
 }

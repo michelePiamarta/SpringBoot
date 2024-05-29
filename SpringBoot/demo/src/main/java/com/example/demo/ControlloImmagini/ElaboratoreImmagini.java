@@ -13,6 +13,9 @@ import com.example.demo.Immagine.Immagine;
 import com.example.demo.Immagine.ImmagineRepository;
 import com.example.demo.Webcam.WebcamRepository;
 
+/**
+ * classe che serve per elaborare le immagini presenti nella coda
+ */
 public class ElaboratoreImmagini extends Thread{
 
     private LinkedBlockingQueue<String> codaImmagini;
@@ -48,7 +51,7 @@ public class ElaboratoreImmagini extends Thread{
                 codaImmagini.take();
             }
             else{
-                System.out.println("la coda è vuota");
+                //System.out.println("la coda è vuota");
             }
         } catch (Exception e) {
             e.printStackTrace();

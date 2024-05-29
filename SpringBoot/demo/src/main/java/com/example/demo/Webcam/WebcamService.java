@@ -1,7 +1,6 @@
 package com.example.demo.Webcam;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ public class WebcamService {
 
     private final WebcamRepository fotocameraRepository;
 
-    @Autowired
     public WebcamService(WebcamRepository fotocameraRepository) {
         this.fotocameraRepository = fotocameraRepository;
     }

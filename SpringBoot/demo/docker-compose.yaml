@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  #springboot:
+  #  container_name: SpringBoot
+
+  postgres:
+    container_name: Postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: traffico
+    ports:
+      - "5432:5432"
+
+  SpringBoot:
+    container_name: SpringBoot
+    build: 
+      dockerfile: .
+    ports:
+      - 8080:8080
+    environment:
+      - db-url: jdbc:postgresql://db:5432/traffico
+      - db-username: postgres
+      - db-password: postgres
+    depends_on:
+      - db
+    restart: always

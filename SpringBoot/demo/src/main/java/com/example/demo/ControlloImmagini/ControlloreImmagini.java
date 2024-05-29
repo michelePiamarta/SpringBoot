@@ -11,12 +11,18 @@ import java.time.YearMonth;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
+/**
+ * classe che serve per controllare le immagini in modo che se ne arriva una nuova allora viene 
+ * aggiunta alla coda
+ */
 public class ControlloreImmagini extends Thread{
     
     //leggo le date del database, se la loro data è uguale allora non faccio niente, se invece è diversa allora faccio partire python
     private String basePath = new File("").getAbsolutePath();
     private String immaginiPath = basePath+"\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini";
     private final String oldFormat = "yyyyMMddHHmmss";
+    Long idCartellaInizio;
+    Long idCartellaFine;
     // una queue thread safe, se non ce un elemento o vuole aggiungerne uno quando la coda è piena
     // allora aspetterà fino a quando non ce un elemento o la coda non si svuota
     private LinkedBlockingQueue<String> codaImmagini;
@@ -36,12 +42,17 @@ public class ControlloreImmagini extends Thread{
         while(true){
             //cerco una nuova immagine/ delle nuove immagini e le aggiungo alla coda
             //(non puoi usare addAll perchè non è un operazione thread safe visto che viene inheritata da abstract queue)
-            File folder = new File(immaginiPath);
-            File[] listOfFolders = folder.listFiles();
-            for (File webcam : listOfFolders) {
-                for(File immagine : webcam.listFiles()){
-                    if(needsToBeProcessed(immagine)){
-                        codaImmagini.add(immagine.getAbsolutePath());
+            if(idCartellaInizio!=null && idCartellaFine!=null){
+                File folder = new File(immaginiPath);
+                File[] listOfFolders = folder.listFiles();
+                for (File webcam : listOfFolders) {
+                    Long webcamId = getCamId(webcam);
+                    if(webcamId >= idCartellaInizio && webcamId <= idCartellaFine){
+                        for(File immagine : webcam.listFiles()){
+                            if(needsToBeProcessed(immagine)){
+                                codaImmagini.add(immagine.getAbsolutePath());
+                            }
+                        }
                     }
                 }
             }
@@ -79,10 +90,10 @@ public class ControlloreImmagini extends Thread{
 
     public boolean needsToBeProcessed(File file){
         //controllo se l'immagine è di oggi
-        if(!isDateToday(getLocalDateTimeFromString(getDateTime(file),oldFormat))){
-            //System.out.println("l'immagine "+file.getName()+" non è di oggi");
-            return false;
-        }
+        //if(!isDateToday(getLocalDateTimeFromString(getDateTime(file),oldFormat))){
+        //    //System.out.println("l'immagine "+file.getName()+" non è di oggi");
+        //    return false;
+        //}
 
         //controllo se è nella coda
         if(codaImmagini.contains(file.getAbsolutePath())){
@@ -104,5 +115,13 @@ public class ControlloreImmagini extends Thread{
             return true;
         }
         return false;
+    }
+
+    public void setCartellaInizio(Long cartellaInizio){
+        this.idCartellaInizio = cartellaInizio;
+    }
+
+    public void setCartellaFine(Long cartellaFine){
+        this.idCartellaFine= cartellaFine;
     }
 }

@@ -1,8 +1,6 @@
 package com.example.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.example.demo.ControlloImmagini.ControlloreImmagini;
 import com.example.demo.ControlloImmagini.ManagerImmagini;
 
 @SpringBootApplication
@@ -19,5 +17,4 @@ public class BackEndApplication {
 		SpringApplication.run(BackEndApplication.class, args);
 		managerImmagini.start(); // fa partire il thread che controlla e processa le immagini
 	}
-
 }

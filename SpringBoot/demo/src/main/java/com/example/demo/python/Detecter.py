@@ -1,12 +1,10 @@
 from ultralytics import YOLO
-import glob
-import json
 import os
 from pathlib import Path
 
 class Detector:
 
-    def __init__(self,cam,immagine):
+    def __init__(self,cam=69,immagine="D:\\Studenti\\PIAMARTA.Michele\\Git\\SpringBoot\\SpringBoot\\SpringBoot\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini\\cam69\\2024428000_20240529083302_cam69.jpg"):
         self.model_path = f'{os.path.dirname(__file__)}\\yolov8n.pt'
         self.dir_path = f'{os.path.dirname(__file__)}\\..\\ControlloImmagini\\immagini\\cam{cam}'
         self.model = YOLO(self.model_path)
@@ -22,7 +20,7 @@ class Detector:
             moto = 0
 
             #prendo l'immagine più recente
-            print(self.immagine)
+            #print(self.immagine)
             #effettuo il rilevamento delle auto
             #aggiungo al livello di traffico 1 per le auto e 2 per i camion
             results = self.model(self.immagine,conf=self.threshold)
