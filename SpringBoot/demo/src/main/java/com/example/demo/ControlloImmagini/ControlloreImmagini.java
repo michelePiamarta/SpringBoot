@@ -1,13 +1,10 @@
 package com.example.demo.ControlloImmagini;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.MonthDay;
+ 
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import com.example.demo.Immagine.ImmagineRepository;
-import java.time.YearMonth;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
@@ -26,6 +23,7 @@ public class ControlloreImmagini extends Thread{
     // una queue thread safe, se non ce un elemento o vuole aggiungerne uno quando la coda è piena
     // allora aspetterà fino a quando non ce un elemento o la coda non si svuota
     private LinkedBlockingQueue<String> codaImmagini;
+    private LinkedBlockingQueue<String>[] codeImmagini;
     //aggiungo una dependency injection per fare query al db
     private final ImmagineRepository immagineRepository;
 
@@ -37,25 +35,29 @@ public class ControlloreImmagini extends Thread{
         this.codaImmagini = codaImmagini;
     }
 
+    public void setCodeImmagini(LinkedBlockingQueue<String>[] codeImmagini){
+        this.codeImmagini = codeImmagini;
+    }
+
     @Override
     public void run() {
         while(true){
             //cerco una nuova immagine/ delle nuove immagini e le aggiungo alla coda
             //(non puoi usare addAll perchè non è un operazione thread safe visto che viene inheritata da abstract queue)
-            if(idCartellaInizio!=null && idCartellaFine!=null){
+            //if(idCartellaInizio!=null && idCartellaFine!=null){
                 File folder = new File(immaginiPath);
                 File[] listOfFolders = folder.listFiles();
                 for (File webcam : listOfFolders) {
                     Long webcamId = getCamId(webcam);
-                    if(webcamId >= idCartellaInizio && webcamId <= idCartellaFine){
+                    //if(webcamId >= idCartellaInizio && webcamId <= idCartellaFine){
                         for(File immagine : webcam.listFiles()){
-                            if(needsToBeProcessed(immagine)){
-                                codaImmagini.add(immagine.getAbsolutePath());
+                            if(needsToBeProcessed(immagine,codeImmagini[(int)(webcamId/10)])){
+                                codeImmagini[(int)(webcamId/10)].add(immagine.getAbsolutePath());
                             }
                         }
-                    }
+                    //}
                 }
-            }
+            //}
         }
     }
 
@@ -88,7 +90,7 @@ public class ControlloreImmagini extends Thread{
         return java.time.LocalDateTime.parse(date, DateTimeFormatter.ofPattern(format));
     } 
 
-    public boolean needsToBeProcessed(File file){
+    public boolean needsToBeProcessed(File file,LinkedBlockingQueue<String> codaImmagini){
         //controllo se l'immagine è di oggi
         //if(!isDateToday(getLocalDateTimeFromString(getDateTime(file),oldFormat))){
         //    //System.out.println("l'immagine "+file.getName()+" non è di oggi");
@@ -102,7 +104,7 @@ public class ControlloreImmagini extends Thread{
         }
         //controllo se è nel database, gli passo come parametri data e cam id
         //controllo se la lista che mi ritorna la query del db non è vuota
-        if(!(this.immagineRepository.hasBeenSaved(getLocalDateTimeFromString(getDateTime(file), oldFormat),getCamId(file)).isEmpty())){
+        if(!(this.immagineRepository.hasSaved(getLocalDateTimeFromString(getDateTime(file), oldFormat),getCamId(file)).isEmpty())){
             //System.out.println("è già presente del db l'immagine "+file.getName());
             return false;
         }
@@ -110,12 +112,12 @@ public class ControlloreImmagini extends Thread{
         return true;
     }
 
-    private boolean isDateToday(LocalDateTime time){
-        if(time.getDayOfMonth() == MonthDay.now().getDayOfMonth() && time.getMonth() == YearMonth.now().getMonth() && time.getYear() == Year.now().getValue()){
-            return true;
-        }
-        return false;
-    }
+    //private boolean isDateToday(LocalDateTime time){
+    //    if(time.getDayOfMonth() == MonthDay.now().getDayOfMonth() && time.getMonth() == YearMonth.now().getMonth() && time.getYear() == Year.now().getValue()){
+    //        return true;
+    //    }
+    //    return false;
+    //}
 
     public void setCartellaInizio(Long cartellaInizio){
         this.idCartellaInizio = cartellaInizio;

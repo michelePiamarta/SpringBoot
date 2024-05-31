@@ -1,16 +1,18 @@
 from ultralytics import YOLO
 import os
-from pathlib import Path
-
+import torch
+import torchvision
 class Detector:
 
-    def __init__(self,cam=69,immagine="D:\\Studenti\\PIAMARTA.Michele\\Git\\SpringBoot\\SpringBoot\\SpringBoot\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini\\cam69\\2024428000_20240529083302_cam69.jpg"):
+    def __init__(self,cam=69,immagine="D:\\Studenti\\PIAMARTA.Michele\\Git\\SpringBoot\\SpringBoot\\SpringBoot\\demo\\src\\main\\java\\com\\example\\demo\\ControlloImmagini\\immagini\\cam124\\2024428000_20240528150402_cam124.jpg"):
         self.model_path = f'{os.path.dirname(__file__)}\\yolov8n.pt'
         self.dir_path = f'{os.path.dirname(__file__)}\\..\\ControlloImmagini\\immagini\\cam{cam}'
-        self.model = YOLO(self.model_path)
         self.idCam = cam
         self.threshold = 0.5
         self.immagine = immagine
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        print(f'Using device: {device}')
+        self.model = YOLO(self.model_path).to(device = device)
 
     def detect(self):
         try:
@@ -23,7 +25,7 @@ class Detector:
             #print(self.immagine)
             #effettuo il rilevamento delle auto
             #aggiungo al livello di traffico 1 per le auto e 2 per i camion
-            results = self.model(self.immagine,conf=self.threshold)
+            results = self.model(self.immagine,conf=self.threshold, classes = [2,3,5,7])
             for result in results:
                 for detection in result:
                     classId = detection.boxes.data[0][5]

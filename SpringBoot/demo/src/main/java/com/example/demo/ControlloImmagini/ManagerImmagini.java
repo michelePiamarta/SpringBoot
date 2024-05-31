@@ -11,36 +11,40 @@ import com.example.demo.Webcam.WebcamRepository;
  */
 public class ManagerImmagini extends Thread{
 
-    private ControlloreImmagini[] controlloriImmagini;
+    //private ControlloreImmagini[] controlloriImmagini;
     private ElaboratoreImmagini[] elaboratoriImmagini;
+    private ControlloreImmagini controlloreImmagini;
 
     public ManagerImmagini(WebcamRepository webcamRepository, ImmagineRepository immagineRepository){
-        this.elaboratoriImmagini = new ElaboratoreImmagini[13];
-        this.controlloriImmagini = new ControlloreImmagini[13];
-
-        for(int i = 0;i<13;i++){
+        this.elaboratoriImmagini = new ElaboratoreImmagini[14];
+        //this.controlloriImmagini = new ControlloreImmagini[14];
+        this.controlloreImmagini = new ControlloreImmagini(immagineRepository);
+        LinkedBlockingQueue<String>[] codeImmagini = new LinkedBlockingQueue[14];
+        for(int i = 0;i<14;i++){
             if(i!=2){
-                LinkedBlockingQueue<String> codaImmagini = new LinkedBlockingQueue<String>();
-                ControlloreImmagini controlloreImmagini = new ControlloreImmagini(immagineRepository);
+                codeImmagini[i] = new LinkedBlockingQueue<String>();
+                //ControlloreImmagini controlloreImmagini = new ControlloreImmagini(immagineRepository);
                 ElaboratoreImmagini elaboratoreImmagini = new ElaboratoreImmagini(webcamRepository,immagineRepository);
-                controlloreImmagini.setCodaImmagini(codaImmagini);
-                elaboratoreImmagini.setCodaImmagini(codaImmagini);
-                controlloreImmagini.setCartellaInizio(i*10l);
-                controlloreImmagini.setCartellaFine(i*10l+9l);
-                controlloriImmagini[i] = controlloreImmagini;
+                //controlloreImmagini.setCodaImmagini(codaImmagini);
+                elaboratoreImmagini.setCodaImmagini(codeImmagini[i]);
+                //controlloreImmagini.setCartellaInizio(i*10l);
+                //controlloreImmagini.setCartellaFine(i*10l+9l);
+                //controlloriImmagini[i] = controlloreImmagini;
                 elaboratoriImmagini[i] = elaboratoreImmagini;
             }
         }
+        this.controlloreImmagini.setCodeImmagini(codeImmagini);
         
     }
- 
+
     @Override
     public void run() {
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 14; i++) {
             if(i!=2){
-                controlloriImmagini[i].start();
+                //controlloriImmagini[i].start();
                 elaboratoriImmagini[i].start();
             }
         }
+        this.controlloreImmagini.start();
     }
 }

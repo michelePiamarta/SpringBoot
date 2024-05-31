@@ -15,5 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface ImmagineRepository extends JpaRepository<Immagine, Long>{
 
     @Query("select i from Immagine i where i.data = ?1 AND i.webcam.id = ?2")
-    List<Immagine> hasBeenSaved(java.time.LocalDateTime data,Long webcamId);
+    List<Immagine> hasSaved(java.time.LocalDateTime data,Long webcamId);
 }

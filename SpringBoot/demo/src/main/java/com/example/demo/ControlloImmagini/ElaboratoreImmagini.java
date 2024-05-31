@@ -46,7 +46,7 @@ public class ElaboratoreImmagini extends Thread{
         try {
             String immagineCorrente = codaImmagini.peek();
             if(immagineCorrente != null){
-                System.out.println("elaborando immagine "+immagineCorrente);
+                //System.out.println("elaborando immagine "+immagineCorrente);
                 pythonStart(pathPython,immagineCorrente, getCamId(immagineCorrente),getLocalDateTimeFromString(getDateTime(immagineCorrente),oldFormat));
                 codaImmagini.take();
             }
@@ -70,7 +70,7 @@ public class ElaboratoreImmagini extends Thread{
             //per leggere i print del processo python
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            StringBuilder result = new StringBuilder();
+            //StringBuilder result = new StringBuilder();
             String line;
             boolean rilevamento = false; //controllo se mi è arrivato "Rilevamento effettuato con successo!"
             Integer macchine = 0;
@@ -79,15 +79,15 @@ public class ElaboratoreImmagini extends Thread{
             while((line = reader.readLine()) != null){
                 //se gli arriva la stringa del rilevamento allora seleziona i dati e li inserisce nel db
                 if(rilevamento){
-                    result.append(line);
-                    System.out.println(line);
+                    //result.append(line);
+                    //System.out.println(line);
                     String[] tmpArray = line.split(" ");
                     macchine = Integer.parseInt(tmpArray[0]);
-                    System.out.println("macchine: " + macchine);
+                    //System.out.println("macchine: " + macchine);
                     camion = Integer.parseInt(tmpArray[1]);
-                    System.out.println("camion: " + camion);
+                    //System.out.println("camion: " + camion);
                     moto = Integer.parseInt(tmpArray[2]);
-                    System.out.println("moto: " + moto);
+                    //System.out.println("moto: " + moto);
                     newEntry(Long.parseLong(webcam), macchine, camion, moto, data);
                     rilevamento = false;
                 }
@@ -96,12 +96,13 @@ public class ElaboratoreImmagini extends Thread{
                 }
             }
 
-            int exitCode = process.waitFor(); //aspetta che il processo finisca così da non far partire più processi contemporaneamente della stessa immagine
-            System.out.println("exit code: " + exitCode);
-            if(exitCode == 0)
-                System.out.println("successo");
-            else
-                System.out.println("errore");
+            //int exitCode = 
+            process.waitFor(); //aspetta che il processo finisca così da non far partire più processi contemporaneamente della stessa immagine
+            //System.out.println("exit code: " + exitCode);
+            //if(exitCode == 0)
+            //    System.out.println("successo");
+            //else
+            //    System.out.println("errore");
         }
         catch(Exception e){
             e.printStackTrace();
